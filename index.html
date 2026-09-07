@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>中国行政区划 · 拼图挑战</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%23BC3A2C'/><text x='12' y='17' font-size='13' text-anchor='middle' fill='%23FBF3E3' font-family='serif'>章</text></svg>">
 <style>
@@ -438,18 +438,129 @@ body {
 }
 .primary-btn:hover { background: var(--seal-deep); }
 
-/* ===== 窄屏 ===== */
+/* ===== 排行榜 ===== */
+.btn-row { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ghost-btn.off { opacity: 0.55; }
+.lb-card {
+  width: min(540px, 94vw);
+  max-height: 84vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 26px 26px 22px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(46, 42, 34, 0.35);
+}
+.lb-card h2 {
+  font-family: "KaiTi", "STKaiti", "Kaiti SC", "FangSong", "SimSun", serif;
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: var(--seal);
+}
+.lb-card .overlay-sub { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
+.lb-tabs { display: flex; gap: 8px; justify-content: center; margin: 16px 0 14px; flex-wrap: wrap; }
+.lb-tabs button {
+  border: 1.5px solid var(--border);
+  background: var(--paper-2);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.lb-tabs button:hover { border-color: var(--seal); }
+.lb-tabs button.active { background: var(--seal); border-color: var(--seal-deep); color: var(--seal-ink); }
+.lb-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; text-align: left; padding: 2px; }
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper-2);
+  padding: 9px 12px;
+  font-size: 13px;
+}
+.lb-row.top { border-color: var(--seal); background: linear-gradient(180deg, var(--paper-3) 0%, #F1E7CD 100%); }
+.lb-rank {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.lb-row.top .lb-rank { background: var(--seal); border-color: var(--seal-deep); color: var(--seal-ink); }
+.lb-main { display: flex; flex-direction: column; gap: 1px; }
+.lb-main b { font-size: 14px; }
+.lb-meta { font-size: 11.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.lb-score { margin-left: auto; font-size: 17px; font-weight: 800; color: var(--seal); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lb-empty { text-align: center; color: var(--ink-2); font-size: 13.5px; padding: 28px 10px; border: 1px dashed var(--line); border-radius: 10px; }
+.lb-foot { margin-top: 16px; display: flex; gap: 10px; justify-content: center; }
+.lb-note { margin-top: 10px; font-size: 11.5px; color: var(--ink-2); letter-spacing: 0.3px; }
+
+/* ===== 窄屏（平板竖屏 / 手机横屏） ===== */
 @media (max-width: 920px) {
-  body { height: auto; min-height: 100vh; }
-  .topbar { padding: 10px 14px; }
-  .stage { flex-direction: column; height: auto; min-height: 0; padding: 12px 14px 16px; gap: 14px; }
-  .map-panel { height: 44vh; min-height: 300px; flex: none; }
+  body { height: auto; min-height: 100vh; min-height: 100svh; }
+  .topbar { padding: 10px 14px; gap: 10px 12px; }
+  .brand h1 { font-size: 21px; letter-spacing: 2px; }
+  .brand .sub { font-size: 11.5px; }
+  .controls { gap: 10px 12px; width: 100%; }
+  .difficulty { flex: 1 1 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .difficulty button { padding: 8px 6px; font-size: 13px; min-height: 44px; }
+  .stats { flex: 1 1 100%; gap: 6px 14px; row-gap: 8px; font-size: 12.5px; }
+  .progress { flex: 1; min-width: 70px; width: auto; }
+  .btn-row { flex: 1 1 100%; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .btn-row .ghost-btn { justify-content: center; padding: 9px 6px; font-size: 12.5px; min-height: 40px; }
+  .btn-row .ghost-btn svg { width: 13px; height: 13px; }
+  .stage { flex-direction: column; height: auto; min-height: 0; padding: 12px 14px calc(16px + env(safe-area-inset-bottom)); gap: 12px; }
+  .map-panel { height: 46vh; height: 46svh; min-height: 300px; flex: none; }
+  .map-tag { display: none; }
+  .map-hint { left: 10px; right: auto; bottom: 8px; font-size: 11px; padding: 4px 10px; }
+  .zoom-ctl { top: 10px; right: 10px; }
+  .zoom-ctl button { width: 40px; height: 40px; font-size: 21px; }
   .card-panel { width: 100%; flex: none; }
-  .card-zone { flex-direction: row; min-height: 128px; }
-  .slot { flex: 1; min-height: 128px; }
-  .card .pin { top: 3px; width: 26px; height: 30px; }
-  .card .intro { display: none; }
-  .toast { top: 70px; }
+  .card-zone { flex-direction: row; min-height: 158px; gap: 10px; }
+  .slot { flex: 1; min-height: 158px; min-width: 0; }
+  .card { gap: 4px; justify-content: flex-start; padding-top: 44px; border-radius: 10px; }
+  .card::after { inset: 4px; }
+  .card .pin { top: 4px; width: 32px; height: 38px; }
+  .card .clue { letter-spacing: 2px; line-height: 1.3; padding: 0 6px; }
+  .card .intro { display: -webkit-box; font-size: 10.5px; line-height: 1.5; padding: 0 8px; }
+  .legend { font-size: 11px; }
+  .toast { top: auto; bottom: 200px; font-size: 13px; padding: 9px 18px; max-width: 92vw; }
+  .overlay { padding: 14px; }
+  .overlay-card { padding: 24px 20px 22px; }
+  .overlay-card h2 { font-size: 27px; }
+  .result-grid { gap: 8px; margin: 16px 0 20px; }
+  .lb-card { padding: 20px 16px 18px; }
+  .lb-tabs button { padding: 8px 12px; font-size: 12.5px; }
+  .lb-list { max-height: 44vh; max-height: 44svh; }
+}
+
+/* ===== 手机竖屏（主要使用场景） ===== */
+@media (max-width: 600px) {
+  .brand h1 { font-size: 19px; }
+  .brand .sub { display: none; }
+  .stats { font-size: 12px; gap: 4px 12px; }
+  .stat b { font-size: 14px; }
+  .card-zone { min-height: 164px; gap: 8px; }
+  .slot { min-height: 164px; }
+  .card .intro { -webkit-line-clamp: 3; }
+}
+
+/* ===== 触屏：更大的拖拽手柄 + 避免双击缩放延迟 ===== */
+@media (pointer: coarse) {
+  .pin.dragging { width: 52px; height: 60px; }
+  .ghost-btn, .difficulty button, .zoom-ctl button, .lb-tabs button { touch-action: manipulation; }
 }
 </style>
 </head>
@@ -472,10 +583,18 @@ body {
       <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
       <span class="stat">最佳 <b id="bestLabel">—</b></span>
     </div>
-    <button id="resetBtn" class="ghost-btn" type="button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
-      重新开始
-    </button>
+    <div class="btn-row">
+      <button id="rankBtn" class="ghost-btn" type="button" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v6a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1c0 2 1.5 3.5 4 3.5"/><path d="M17 6h3a1 1 0 0 1 1 1c0 2-1.5 3.5-4 3.5"/></svg>
+        排行榜
+      </button>
+      <button id="soundBtn" class="ghost-btn" type="button" aria-pressed="true">🔊 音效开</button>
+      <button id="musicBtn" class="ghost-btn off" type="button" aria-pressed="false">🎵 音乐关</button>
+      <button id="resetBtn" class="ghost-btn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+        重新开始
+      </button>
+    </div>
   </div>
 </header>
 
@@ -494,7 +613,7 @@ body {
 
   <aside class="card-panel">
     <div class="card-zone" id="cardZone" aria-label="待放置的卡片"></div>
-    <p class="legend">滚轮缩放地图 · 按住拖动平移 · 定位图标尖端即投放位置</p>
+    <p class="legend" id="legendText">滚轮缩放地图 · 按住拖动平移 · 定位图标尖端即投放位置</p>
   </aside>
 </main>
 
@@ -511,6 +630,23 @@ body {
       <div class="cell"><dt>最佳成绩</dt><dd id="finalBest">—</dd></div>
     </dl>
     <button id="againBtn" class="primary-btn" type="button">再来一局</button>
+  </div>
+</div>
+
+<div class="overlay" id="rankOverlay" role="dialog" aria-modal="true" aria-labelledby="rankTitle">
+  <div class="lb-card">
+    <h2 id="rankTitle">排行榜</h2>
+    <p class="overlay-sub">本地最佳成绩 · 三个模式分开记录（联网全球榜预留中）</p>
+    <div class="lb-tabs" role="tablist" aria-label="排行榜切换">
+      <button type="button" data-lb="name" class="active" role="tab" aria-selected="true">省份名称榜</button>
+      <button type="button" data-lb="short" role="tab" aria-selected="false">省份简称榜</button>
+      <button type="button" data-lb="capital" role="tab" aria-selected="false">行政中心榜</button>
+    </div>
+    <div class="lb-list" id="rankList"></div>
+    <p class="lb-note">每种模式保留本地前 10 名 · 通关自动上榜 · 换电脑/清缓存会丢失，后续接云端后同步</p>
+    <div class="lb-foot">
+      <button id="rankCloseBtn" class="primary-btn" type="button">关闭</button>
+    </div>
   </div>
 </div>
 
@@ -593,11 +729,55 @@ body {
     timerStarted: false,
     timerId: null
   };
-  var BEST_KEY = "china-map-challenge-best";
-  var best = null;
-  try {
-    best = JSON.parse(localStorage.getItem(BEST_KEY) || "null");
-  } catch (e) { best = null; }
+  var BEST_KEY = "china-map-challenge-best"; // 旧版单榜键，仅用于迁移
+  var LB_KEY = "china-map-challenge-boards-v1";
+  var LB_MAX = 10;
+  var MODE_NAMES = { name: "省份名称", short: "省份简称", capital: "行政中心" };
+  var boards = { name: [], short: [], capital: [] };
+  function loadBoards() {
+    try {
+      var raw = JSON.parse(localStorage.getItem(LB_KEY) || "null");
+      if (raw) {
+        ["name", "short", "capital"].forEach(function (k) {
+          if (raw && Object.prototype.toString.call(raw[k]) === "[object Array]") {
+            boards[k] = raw[k].filter(function (r) {
+              return r && typeof r.score === "number";
+            }).slice(0, LB_MAX);
+          }
+        });
+        return;
+      }
+    } catch (e) { /* 忽略，走迁移 */ }
+    // 迁移旧版单条最佳：模式未知，归入名称榜，避免老用户数据丢失
+    try {
+      var old = JSON.parse(localStorage.getItem(BEST_KEY) || "null");
+      if (old && typeof old.score === "number") {
+        boards.name = [{ score: old.score, seconds: old.seconds || 0, mistakes: old.mistakes || 0, date: Date.now() }];
+        try { localStorage.setItem(LB_KEY, JSON.stringify(boards)); } catch (e2) { /* 忽略 */ }
+      }
+    } catch (e3) { /* 忽略 */ }
+  }
+  function saveBoards() {
+    try { localStorage.setItem(LB_KEY, JSON.stringify(boards)); } catch (e) { /* 忽略 */ }
+  }
+  function bestOf(mode) {
+    var list = boards[mode] || [];
+    return list.length ? list[0] : null;
+  }
+  // 通关写入对应模式榜：按得分降序、用时升序，保留前 LB_MAX 名；返回是否成为该榜第一
+  function addRecord(mode, rec) {
+    var list = boards[mode] || (boards[mode] = []);
+    var oldBest = list.length ? list[0].score : -Infinity;
+    list.push(rec);
+    list.sort(function (a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return (a.seconds || 0) - (b.seconds || 0);
+    });
+    boards[mode] = list.slice(0, LB_MAX);
+    saveBoards();
+    return rec.score > oldBest;
+  }
+  loadBoards();
 
   /* ================= DOM ================= */
   var mapPanel = document.getElementById("mapPanel");
@@ -612,6 +792,14 @@ body {
   var difficultyBtns = Array.prototype.slice.call(document.querySelectorAll(".difficulty button"));
   var resetBtn = document.getElementById("resetBtn");
   var againBtn = document.getElementById("againBtn");
+  var rankBtn = document.getElementById("rankBtn");
+  var rankOverlay = document.getElementById("rankOverlay");
+  var rankList = document.getElementById("rankList");
+  var rankCloseBtn = document.getElementById("rankCloseBtn");
+  var rankTabBtns = Array.prototype.slice.call(document.querySelectorAll(".lb-tabs button"));
+  var soundBtn = document.getElementById("soundBtn");
+  var musicBtn = document.getElementById("musicBtn");
+  var lbTab = "name";
 
   /* ================= 工具 ================= */
   function escapeHtml(s) {
@@ -732,6 +920,117 @@ body {
     }, { notMerge: true });
   }
 
+  /* ================= 音效与背景音乐（WebAudio 合成，无外部文件） ================= */
+  var soundOn = true, musicOn = false;
+  try {
+    soundOn = localStorage.getItem("china-map-challenge-sound") !== "off";
+    musicOn = localStorage.getItem("china-map-challenge-music") === "on";
+  } catch (e) { /* 忽略 */ }
+  var audioCtx = null;
+  function ensureAudio() {
+    try {
+      if (!audioCtx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        audioCtx = new AC();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    } catch (e) { return null; }
+    return audioCtx;
+  }
+  function tone(freq, delay, dur, type, vol, slideTo) {
+    var ctx = ensureAudio();
+    if (!ctx || !soundOn && type !== "music") return;
+    try {
+      var t = ctx.currentTime + (delay || 0);
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.setValueAtTime(freq, t);
+      if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1, slideTo), t + dur);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(vol || 0.15, t + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + dur + 0.05);
+    } catch (e) { /* 忽略 */ }
+  }
+  function playClick() { if (!soundOn) return; tone(440, 0, 0.07, "sine", 0.07); }
+  function playSuccess() {
+    if (!soundOn) return;
+    tone(523.25, 0, 0.14, "sine", 0.16);
+    tone(783.99, 0.09, 0.22, "sine", 0.16);
+  }
+  function playFail() {
+    if (!soundOn) return;
+    tone(185, 0, 0.2, "square", 0.07, 120);
+    tone(140, 0.05, 0.22, "sine", 0.1, 90);
+  }
+  function playFinish() {
+    if (!soundOn) return;
+    var seq = [523.25, 659.25, 783.99, 1046.5];
+    for (var fi = 0; fi < seq.length; fi++) tone(seq[fi], fi * 0.12, 0.26, "triangle", 0.14);
+  }
+  // 背景音乐：五声音阶（宫商角徵羽）舒缓循环，音量压低不干扰
+  var MUSIC_NOTES = [523.25, 587.33, 659.25, 587.33, 523.25, 392, 440, 523.25, 0, 659.25, 587.33, 523.25, 440, 392, 440, 0];
+  var musicTimer = null, musicStep = 0;
+  function musicTick() {
+    if (!musicOn) return;
+    var f = MUSIC_NOTES[musicStep % MUSIC_NOTES.length];
+    musicStep++;
+    if (f) {
+      var ctx = ensureAudio();
+      if (ctx) {
+        try {
+          var t = ctx.currentTime;
+          var osc = ctx.createOscillator();
+          var g = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(f, t);
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(0.05, t + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9);
+          osc.connect(g);
+          g.connect(ctx.destination);
+          osc.start(t);
+          osc.stop(t + 1);
+        } catch (e) { /* 忽略 */ }
+      }
+    }
+  }
+  function startMusic() {
+    if (musicTimer) return;
+    ensureAudio();
+    musicStep = 0;
+    musicTimer = setInterval(musicTick, 460);
+  }
+  function stopMusic() {
+    if (musicTimer) { clearInterval(musicTimer); musicTimer = null; }
+  }
+  function refreshSoundBtns() {
+    if (soundBtn) {
+      soundBtn.textContent = soundOn ? "🔊 音效开" : "🔇 音效关";
+      soundBtn.classList.toggle("off", !soundOn);
+      soundBtn.setAttribute("aria-pressed", soundOn ? "true" : "false");
+    }
+    if (musicBtn) {
+      musicBtn.textContent = musicOn ? "🎵 音乐开" : "🎵 音乐关";
+      musicBtn.classList.toggle("off", !musicOn);
+      musicBtn.setAttribute("aria-pressed", musicOn ? "true" : "false");
+    }
+  }
+  // 浏览器自动播放策略：首次手势后才允许启动（若用户之前开过音乐则恢复播放）
+  function unlockAudioOnce() {
+    ensureAudio();
+    if (musicOn) startMusic();
+    document.removeEventListener("pointerdown", unlockAudioOnce);
+    document.removeEventListener("keydown", unlockAudioOnce);
+  }
+  document.addEventListener("pointerdown", unlockAudioOnce);
+  document.addEventListener("keydown", unlockAudioOnce);
+
   /* ================= 计时 ================= */
   function startTimer() {
     if (state.timerStarted || state.finished) return;
@@ -797,7 +1096,11 @@ body {
     card.dataset.province = c.name;
     card.dataset.slot = i;
     var len = c.text.length;
-    var fs = len >= 7 ? 21 : len === 6 ? 23 : len === 5 ? 27 : len === 4 ? 31 : 34;
+    // 窄屏三列卡片宽度仅 ~110px：用小字号 + 允许长名称换行，避免溢出
+    var narrow = document.documentElement.clientWidth <= 920;
+    var fs = narrow
+      ? (len >= 7 ? 15 : len === 6 ? 16 : len === 5 ? 17 : 19)
+      : (len >= 7 ? 21 : len === 6 ? 23 : len === 5 ? 27 : len === 4 ? 31 : 34);
     card.innerHTML =
       '<span class="pin" title="按住此处，拖到地图上对应的省份" aria-label="拖拽定位点">' + PIN_SVG + "</span>" +
       '<span class="clue" style="font-size:' + fs + 'px">' + escapeHtml(c.text) + "</span>" +
@@ -945,6 +1248,7 @@ body {
       onCorrect(card, target);
     } else {
       state.mistakes++;
+      playFail();
       toast(hit ? "「" + hit + "」不是目标省份，再试试" : "这里不是省份区域，再试试", false);
       card.classList.add("wrong");
       setTimeout(function () { card.classList.remove("wrong"); }, 480);
@@ -954,6 +1258,7 @@ body {
 
   function onCorrect(card, name) {
     state.placed[name] = true;
+    playSuccess();
     var count = Object.keys(state.placed).length;
     placedCountEl.textContent = count;
     progressFill.style.width = Math.round((count / TOTAL) * 100) + "%";
@@ -978,23 +1283,68 @@ body {
     state.finished = true;
     stopTimer();
     var score = Math.max(100, Math.round(1000 + Math.max(0, 3000 - state.seconds * 4) - state.mistakes * 25));
-    var isNewBest = false;
-    if (!best || score > best.score) {
-      best = { score: score, seconds: state.seconds, mistakes: state.mistakes };
-      isNewBest = true;
-      try { localStorage.setItem(BEST_KEY, JSON.stringify(best)); } catch (e) { /* 忽略 */ }
-    }
+    var mode = state.clueType;
+    var isNewBest = addRecord(mode, { score: score, seconds: state.seconds, mistakes: state.mistakes, date: Date.now() });
+    playFinish();
     document.getElementById("finalTime").textContent = formatTime(state.seconds);
     document.getElementById("finalMistakes").textContent = state.mistakes;
     document.getElementById("finalScore").textContent = score;
+    var curBest = bestOf(mode);
     var bestDd = document.getElementById("finalBest");
-    bestDd.innerHTML = escapeHtml(best.score + " 分") + (isNewBest ? '<span class="badge-new">新纪录</span>' : "");
+    bestDd.innerHTML = escapeHtml((curBest ? curBest.score : score) + " 分") + (isNewBest ? '<span class="badge-new">新纪录</span>' : "");
     overlay.classList.add("show");
     renderBest();
   }
 
   function renderBest() {
-    bestLabel.textContent = best ? best.score + " 分" : "—";
+    var b = bestOf(state.clueType);
+    bestLabel.textContent = b ? b.score + " 分" : "—";
+    bestLabel.title = MODE_NAMES[state.clueType] + "榜最佳";
+  }
+
+  /* ================= 排行榜弹窗 ================= */
+  function formatDate(ts) {
+    try {
+      var d = new Date(ts);
+      var m = d.getMonth() + 1, day = d.getDate();
+      return m + "月" + day + "日";
+    } catch (e) { return ""; }
+  }
+  function renderRank() {
+    rankTabBtns.forEach(function (b) {
+      var on = b.dataset.lb === lbTab;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    var list = boards[lbTab] || [];
+    rankList.innerHTML = "";
+    if (!list.length) {
+      var empty = document.createElement("div");
+      empty.className = "lb-empty";
+      empty.textContent = "「" + MODE_NAMES[lbTab] + "榜」暂无成绩，快去完成一局、拿下第一吧！";
+      rankList.appendChild(empty);
+      return;
+    }
+    list.forEach(function (r, idx) {
+      var row = document.createElement("div");
+      row.className = "lb-row" + (idx < 3 ? " top" : "");
+      row.innerHTML =
+        '<span class="lb-rank">' + (idx + 1) + "</span>" +
+        '<span class="lb-main"><b>' + escapeHtml(r.score + " 分") + "</b>" +
+        '<span class="lb-meta">用时 ' + escapeHtml(formatTime(r.seconds || 0)) +
+        " · 错误 " + escapeHtml(String(r.mistakes == null ? 0 : r.mistakes)) + " 次" +
+        (r.date ? " · " + escapeHtml(formatDate(r.date)) : "") + "</span></span>" +
+        '<span class="lb-score">' + (idx === 0 ? "👑 " : "") + escapeHtml(r.score + "") + "</span>";
+      rankList.appendChild(row);
+    });
+  }
+  function openRank(mode) {
+    if (mode && MODE_NAMES[mode]) lbTab = mode;
+    renderRank();
+    rankOverlay.classList.add("show");
+  }
+  function closeRank() {
+    rankOverlay.classList.remove("show");
   }
 
   /* ================= 重置 ================= */
@@ -1033,9 +1383,9 @@ body {
     var next = Math.max(1, Math.min(8, +(currentZoom() * factor).toFixed(3)));
     chart.setOption({ series: [{ id: "chinaMap", zoom: next }] });
   }
-  zoomInBtn.addEventListener("click", function () { mapZoom(1.35); });
-  zoomOutBtn.addEventListener("click", function () { mapZoom(1 / 1.35); });
-  zoomResetBtn.addEventListener("click", resetMapView);
+  zoomInBtn.addEventListener("click", function () { playClick(); mapZoom(1.35); });
+  zoomOutBtn.addEventListener("click", function () { playClick(); mapZoom(1 / 1.35); });
+  zoomResetBtn.addEventListener("click", function () { playClick(); resetMapView(); });
 
   /* ================= 提示条 ================= */
   var toastTimer = null;
@@ -1052,6 +1402,7 @@ body {
     btn.addEventListener("click", function () {
       var t = btn.dataset.type;
       if (state.clueType === t) return;
+      playClick();
       state.clueType = t;
       difficultyBtns.forEach(function (b) {
         var on = b === btn;
@@ -1060,18 +1411,54 @@ body {
       });
       // 保留已点亮省份，按新抽查类型重新抽取三张卡片
       initCards();
+      renderBest();
       toast("已切换为「" + btn.textContent.trim() + "」抽查，卡片已重新抽取");
     });
   });
 
-  resetBtn.addEventListener("click", resetGame);
-  againBtn.addEventListener("click", resetGame);
+  resetBtn.addEventListener("click", function () { playClick(); resetGame(); });
+  againBtn.addEventListener("click", function () { playClick(); resetGame(); });
+
+  rankBtn.addEventListener("click", function () { playClick(); openRank(state.clueType); });
+  rankCloseBtn.addEventListener("click", function () { playClick(); closeRank(); });
+  rankOverlay.addEventListener("click", function (e) { if (e.target === rankOverlay) closeRank(); });
+  rankTabBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      playClick();
+      lbTab = btn.dataset.lb;
+      renderRank();
+    });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && rankOverlay.classList.contains("show")) closeRank();
+  });
+
+  soundBtn.addEventListener("click", function () {
+    soundOn = !soundOn;
+    try { localStorage.setItem("china-map-challenge-sound", soundOn ? "on" : "off"); } catch (e) { /* 忽略 */ }
+    refreshSoundBtns();
+    ensureAudio();
+    playClick();
+  });
+  musicBtn.addEventListener("click", function () {
+    musicOn = !musicOn;
+    try { localStorage.setItem("china-map-challenge-music", musicOn ? "on" : "off"); } catch (e) { /* 忽略 */ }
+    ensureAudio();
+    if (musicOn) startMusic(); else stopMusic();
+    refreshSoundBtns();
+    playClick();
+  });
 
   /* ================= 启动 ================= */
+  if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) {
+    var legendEl = document.getElementById("legendText");
+    if (legendEl) legendEl.textContent = "双指缩放地图 · 单指拖动平移 · 按住定位图标拖到对应省份";
+  }
   initMap();
   buildSlots();
   initCards();
   renderBest();
+  refreshSoundBtns();
 })();
 </script>
 </body>
