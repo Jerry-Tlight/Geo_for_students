@@ -613,7 +613,7 @@ body {
 
   <aside class="card-panel">
     <div class="card-zone" id="cardZone" aria-label="待放置的卡片"></div>
-    <p class="legend" id="legendText">滚轮缩放地图 · 按住拖动平移 · 定位图标尖端即投放位置</p>
+    <p class="legend" id="legendText">滚轮缩放地图 · 按住拖动平移 · 定位图标尖端即投放位置 · 小省份点周边也算</p>
   </aside>
 </main>
 
@@ -716,6 +716,34 @@ body {
     });
     FEATURES.push({ name: name, bbox: [minX, minY, maxX, maxY], polys: polys });
   });
+
+  // 小省份手指点不中：允许点中其周边一定范围（多为海域）也算命中。
+  // 半径用经纬度表示（随缩放自动换算成像素，缩得越深吸附越准），只在精确判定落空时兜底，
+  // 不覆盖邻省的精确命中，所以不会把广东沿海误判成港澳。
+  var SMALL_HIT = {
+    "澳门特别行政区": 0.22,
+    "香港特别行政区": 0.28,
+    "上海市": 0.30,
+    "天津市": 0.25,
+    "海南省": 0.50
+  };
+  var SMALL_CENTERS = {};
+  GEO_FEATURES.forEach(function (f) {
+    var n = f.properties.name;
+    if (SMALL_HIT.hasOwnProperty(n) && f.properties.center) SMALL_CENTERS[n] = f.properties.center;
+  });
+  function provinceNearMiss(lng, lat) {
+    var bestName = null, bestD = Infinity;
+    for (var n in SMALL_HIT) {
+      if (!SMALL_HIT.hasOwnProperty(n) || !SMALL_CENTERS[n]) continue;
+      if (state.placed[n]) continue; // 已点亮的不再吸附，避免干扰邻省判定
+      var c = SMALL_CENTERS[n];
+      var dx = (lng - c[0]) * Math.cos(c[1] * Math.PI / 180), dy = lat - c[1];
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d <= SMALL_HIT[n] && d < bestD) { bestD = d; bestName = n; }
+    }
+    return bestName;
+  }
 
   /* ================= 状态 ================= */
   var TOTAL = Object.keys(PROVINCES).length; // 34
@@ -852,6 +880,7 @@ body {
     Object.keys(PROVINCES).forEach(function (name) {
       var p = PROVINCES[name];
       var isPlaced = !!state.placed[name];
+      var labelSize = SMALL_HIT.hasOwnProperty(name) ? 10 : 13; // 小省份字小一点，不压住邻省
       data.push({
         name: name,
         value: 0,
@@ -859,12 +888,12 @@ body {
           ? { areaColor: SEAL, borderColor: SEAL_DEEP, borderWidth: 1.4 }
           : { areaColor: LAND, borderColor: BORDER, borderWidth: 1 },
         label: isPlaced
-          ? { show: true, formatter: p.short[0], color: SEAL_INK, fontSize: 13, fontWeight: "bold" }
+          ? { show: true, formatter: p.short[0], color: SEAL_INK, fontSize: labelSize, fontWeight: "bold" }
           : { show: false },
         emphasis: { itemStyle: { areaColor: isPlaced ? SEAL : LAND }, label: { show: false } },
         select: {
           itemStyle: { areaColor: isPlaced ? SEAL : LAND_HI },
-          label: { show: true, formatter: p.short[0], color: INK, fontSize: 13 }
+          label: { show: true, formatter: p.short[0], color: INK, fontSize: labelSize }
         }
       });
     });
@@ -882,7 +911,7 @@ body {
       type: "map",
       map: "china",
       roam: true,
-      scaleLimit: { min: 1, max: 8 },
+      scaleLimit: { min: 1, max: 12 },
       selectedMode: false,
       layoutCenter: ["50%", "50%"],
       layoutSize: "100%",
@@ -1244,6 +1273,7 @@ body {
       return;
     }
     var hit = provinceAt(pt[0], pt[1]);
+    if (!hit) hit = provinceNearMiss(pt[0], pt[1]); // 小省份：周边海域也算
     if (hit === target) {
       onCorrect(card, target);
     } else {
@@ -1380,7 +1410,7 @@ body {
   }
   function mapZoom(factor) {
     if (!chart) return;
-    var next = Math.max(1, Math.min(8, +(currentZoom() * factor).toFixed(3)));
+    var next = Math.max(1, Math.min(12, +(currentZoom() * factor).toFixed(3)));
     chart.setOption({ series: [{ id: "chinaMap", zoom: next }] });
   }
   zoomInBtn.addEventListener("click", function () { playClick(); mapZoom(1.35); });
@@ -1452,7 +1482,7 @@ body {
   /* ================= 启动 ================= */
   if (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) {
     var legendEl = document.getElementById("legendText");
-    if (legendEl) legendEl.textContent = "双指缩放地图 · 单指拖动平移 · 按住定位图标拖到对应省份";
+    if (legendEl) legendEl.textContent = "双指缩放地图 · 单指拖动平移 · 按住定位图标拖到对应省份 · 小省份点周边也算";
   }
   initMap();
   buildSlots();
